@@ -27,6 +27,39 @@ const validate = (validateInput: Validate) => {
   return isValid;
 }
 
+class ProjectList {
+  templateElement: HTMLTemplateElement;
+  hostElement: HTMLDivElement;
+  element: HTMLElement;
+
+  constructor(private type: 'active' | 'finished') {
+    this.templateElement = <HTMLTemplateElement>document.getElementById('project-list')!
+    this.hostElement = <HTMLDivElement>document.getElementById('app');
+
+    const importedHTMLContent = document.importNode(this.templateElement.content, true);
+    this.element = <HTMLElement>importedHTMLContent.firstElementChild;
+    this.element.id = `${this.type}-projects`;
+    this.attach();
+    this.renderContent();
+  }
+
+  private renderContent() {
+    let dynamicType;
+    if (this.type === 'active') {
+      dynamicType = ' АКТИВНЫЕ';
+    } else if (this.type === 'finished') {
+      dynamicType = ' ЗАВЕРШЕННЫЕ';
+    }
+    const listId = `${this.type}-projects-list`;
+    this.element.querySelector('ul')!.id = listId;
+    this.element.querySelector('h2')!.textContent = dynamicType + ' ПРОЕКТЫ';
+  }
+ 
+  private attach() {
+    this.hostElement.insertAdjacentElement('beforeend', this.element);
+  }
+}
+
 class ProjectInput {
   templateElement: HTMLTemplateElement;
   hostElement: HTMLDivElement;
@@ -98,3 +131,5 @@ class ProjectInput {
 }
 
 const projectInput = new ProjectInput();
+const activeProjectsList = new ProjectList('active');
+const finishedProjectsList = new ProjectList('finished');
