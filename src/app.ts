@@ -1,3 +1,32 @@
+class ProjectState {
+  private projects: any[] = [];
+  private static instance: ProjectState;
+
+  private constructor() {
+
+  }
+
+  static getInstance() {
+    if (this.instance) {
+      return this.instance;
+    }
+    this.instance = new ProjectState();
+    return this.instance;
+  }
+
+  addProject(title: string, desc: string, people: number) {
+    const newProject = {
+      id: Math.random().toString(),
+      title,
+      desc,
+      people
+    };
+    this.projects.push(newProject);
+  }
+}
+
+const projectState = ProjectState.getInstance();
+
 interface Validate {
   value: string | number;
   required?: boolean;
@@ -117,7 +146,8 @@ class ProjectInput {
     const userInput = this.fetchUserInput()
     if (Array.isArray(userInput)) {
       const [title, desc, people] = userInput;
-      console.log(title, desc, people);
+      projectState.addProject(title, desc, people);
+      this.clearInputs();
     }
   }
 
@@ -127,6 +157,12 @@ class ProjectInput {
 
   private attach() {
     this.hostElement.insertAdjacentElement('afterbegin', this.element);
+  }
+
+  private clearInputs() {
+    this.titleInputElement.value = '';
+    this.descriptionInputElement.value = '';
+    this.peopleInputElement.value = '';
   }
 }
 
