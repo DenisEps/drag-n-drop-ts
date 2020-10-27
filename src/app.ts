@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 enum ProjectStatus {
   Active,
   Finished,
@@ -17,7 +18,9 @@ type Listener = (items: Project[]) => void;
 
 class ProjectState {
   private listeners: Listener[] = [];
+
   private projects: Project[] = [];
+
   private static instance: ProjectState;
 
   private constructor() {}
@@ -88,8 +91,11 @@ const validate = (validateInput: Validate) => {
 
 class ProjectList {
   templateElement: HTMLTemplateElement;
+
   hostElement: HTMLDivElement;
+
   element: HTMLElement;
+
   assignedProjects: Project[];
 
   constructor(private type: 'active' | 'finished') {
@@ -107,7 +113,13 @@ class ProjectList {
     this.element.id = `${this.type}-projects`;
 
     projectState.addListener((projects: any[]) => {
-      this.assignedProjects = projects;
+      const relevantProjects = projects.filter((project) => {
+        if (this.type === 'active') {
+          return project.status === ProjectStatus.Active;
+        }
+        return project.status === ProjectStatus.Finished;
+      });
+      this.assignedProjects = relevantProjects;
       this.renderProjects();
     });
 
@@ -119,6 +131,7 @@ class ProjectList {
     const listElement = <HTMLUListElement>(
       document.getElementById(`${this.type}-projects-list`)!
     );
+    listElement.innerHTML = '';
     for (const projectItem of this.assignedProjects) {
       const listItem = document.createElement('li');
       listItem.textContent = projectItem.title;
@@ -135,7 +148,7 @@ class ProjectList {
     }
     const listId = `${this.type}-projects-list`;
     this.element.querySelector('ul')!.id = listId;
-    this.element.querySelector('h2')!.textContent = dynamicType + ' ПРОЕКТЫ';
+    this.element.querySelector('h2')!.textContent = `${dynamicType} ПРОЕКТЫ`;
   }
 
   private attach() {
@@ -145,10 +158,15 @@ class ProjectList {
 
 class ProjectInput {
   templateElement: HTMLTemplateElement;
+
   hostElement: HTMLDivElement;
+
   element: HTMLFormElement;
+
   titleInputElement: HTMLInputElement;
+
   descriptionInputElement: HTMLInputElement;
+
   peopleInputElement: HTMLInputElement;
 
   constructor() {
