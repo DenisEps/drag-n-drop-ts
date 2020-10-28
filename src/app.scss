@@ -1,7 +1,7 @@
 :root {
-  --main-color: #D1495B;
-  --main-color-hover: #A32939;
-  --secondary-color: #2E86AB;
+  --main-color: #d1495b;
+  --main-color-hover: #a32939;
+  --secondary-color: #2e86ab;
 }
 
 * {
@@ -97,6 +97,7 @@ button:active {
   box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.26);
   padding: 1rem;
   margin: 1rem;
+  background-color: white;
 }
 
 .projects li h2 {
