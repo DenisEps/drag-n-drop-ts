@@ -182,7 +182,7 @@ class ProjectItem
       'dragstart',
       this.dragStartHandler.bind(this),
     );
-    this.element.addEventListener('dragend', this.dragStartHandler);
+    this.element.addEventListener('dragend', this.dragEndHandler);
   }
 
   renderContent() {
