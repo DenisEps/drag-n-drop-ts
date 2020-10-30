@@ -1,4 +1,16 @@
 /* eslint-disable max-classes-per-file */
+function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
+  const originalMethod = descriptor.value;
+  const adjDescriptor: PropertyDescriptor = {
+    configurable: true,
+    get() {
+      const boundFn = originalMethod.bind(this);
+      return boundFn;
+    },
+  };
+  return adjDescriptor;
+}
+
 interface Draggable {
   dragStartHandler(event: DragEvent): void;
   dragEndHandler(event: DragEvent): void;
@@ -61,9 +73,24 @@ class ProjectState extends State<Project> {
       ProjectStatus.Active,
     );
     this.projects.push(newProject);
-    for (const listenerFn of this.listeners) {
-      listenerFn([...this.projects]);
+    this.updateListeners();
+    // for (const listenerFn of this.listeners) {
+    //   listenerFn([...this.projects]);
+    // }
+  }
+
+  moveProject(projectId: string, newStatus: ProjectStatus) {
+    const project = this.projects.find((proj) => proj.id === projectId);
+    if (project && project.status !== newStatus) {
+      project.status = newStatus;
+      this.updateListeners();
     }
+  }
+
+  private updateListeners() {
+    this.listeners.forEach((listenerFunc) => {
+      listenerFunc([...this.projects]);
+    });
   }
 }
 
@@ -224,8 +251,13 @@ class ProjectList
     }
   }
 
+  @autobind
   dropHandler(event: DragEvent) {
-    console.log(event.dataTransfer!.getData('text/plain'));
+    const projectId = event.dataTransfer!.getData('text/plain');
+    projectState.moveProject(
+      projectId,
+      this.type === 'active' ? ProjectStatus.Active : ProjectStatus.Finished,
+    );
   }
 
   dragLeaveHandler(_: DragEvent) {
