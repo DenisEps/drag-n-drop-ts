@@ -1,46 +1,41 @@
-namespace App {
-  export abstract class Component<
-    T extends HTMLElement,
-    U extends HTMLElement
-  > {
-    templateElement: HTMLTemplateElement;
+export abstract class Component<T extends HTMLElement, U extends HTMLElement> {
+  templateElement: HTMLTemplateElement;
 
-    hostElement: T;
+  hostElement: T;
 
-    element: U;
+  element: U;
 
-    constructor(
-      templateId: string,
-      hostElementId: string,
-      insertAtStart: boolean,
-      newElementId?: string,
-    ) {
-      this.templateElement = <HTMLTemplateElement>(
-        document.getElementById(templateId)!
-      );
-      this.hostElement = <T>document.getElementById(hostElementId);
+  constructor(
+    templateId: string,
+    hostElementId: string,
+    insertAtStart: boolean,
+    newElementId?: string,
+  ) {
+    this.templateElement = <HTMLTemplateElement>(
+      document.getElementById(templateId)!
+    );
+    this.hostElement = <T>document.getElementById(hostElementId);
 
-      const importedHTMLContent = document.importNode(
-        this.templateElement.content,
-        true,
-      );
-      this.element = <U>importedHTMLContent.firstElementChild;
-      if (newElementId) {
-        this.element.id = newElementId;
-      }
-
-      this.attach(insertAtStart);
+    const importedHTMLContent = document.importNode(
+      this.templateElement.content,
+      true,
+    );
+    this.element = <U>importedHTMLContent.firstElementChild;
+    if (newElementId) {
+      this.element.id = newElementId;
     }
 
-    private attach(insertAtBeginning: boolean) {
-      this.hostElement.insertAdjacentElement(
-        insertAtBeginning ? 'afterbegin' : 'beforeend',
-        this.element,
-      );
-    }
-
-    abstract configure(): void;
-
-    abstract renderContent(): void;
+    this.attach(insertAtStart);
   }
+
+  private attach(insertAtBeginning: boolean) {
+    this.hostElement.insertAdjacentElement(
+      insertAtBeginning ? 'afterbegin' : 'beforeend',
+      this.element,
+    );
+  }
+
+  abstract configure(): void;
+
+  abstract renderContent(): void;
 }
